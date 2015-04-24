@@ -1,16 +1,16 @@
 class Api::V1::RegistrationsController < Devise::RegistrationsController
   include ApiHelper
-  skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
+  skip_before_filter :verify_authenticity_token, if: :json_request?
   skip_before_filter :authenticate_scope!, :only => [:update]
   before_filter :validate_auth_token, :except => :create
   respond_to :json
 
   def create
     build_resource(sign_up_params)
- 
+
     if resource.save
       if resource.active_for_authentication?
-        return render :json => {:success => true}
+        return render :json => resource
       else
         expire_session_data_after_sign_in!
         return render :json => {:success => true}
@@ -37,6 +37,12 @@ class Api::V1::RegistrationsController < Devise::RegistrationsController
       clean_up_passwords resource
       return render :status => 401, :json => {errors: resource.errors}
     end
+  end
+
+  private
+
+  def json_request?
+    request.content_type == 'application/json'
   end
 
   def account_update_params
