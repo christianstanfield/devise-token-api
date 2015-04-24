@@ -61,6 +61,8 @@ GEM
       responders
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
+    devise-token_authenticatable (0.3.0)
+      devise (~> 3.4.0)
     diff-lcs (1.2.5)
     erubis (2.7.0)
     execjs (2.5.2)
@@ -226,6 +228,7 @@ DEPENDENCIES
   byebug
   coffee-rails (~> 4.1.0)
   devise
+  devise-token_authenticatable
   factory_girl_rails
   haml (>= 3.0.0)
   haml-rails

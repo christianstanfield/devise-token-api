@@ -34,6 +34,8 @@ gem 'bcrypt', '~> 3.1.7'
 # gem 'capistrano', group: :development
 
 gem "devise"
+gem 'devise-token_authenticatable'
+
 gem "haml", ">= 3.0.0"
 gem "haml-rails"
 gem "redis"
