@@ -1,8 +1,8 @@
 class Api::V1::RegistrationsController < Devise::RegistrationsController
-  include ApiHelper
   skip_before_filter :verify_authenticity_token, if: :json_request?
-  skip_before_filter :authenticate_scope!, :only => [:update]
-  before_filter :validate_auth_token, :except => :create
+  skip_before_filter :authenticate_scope!, only: [:update]
+  before_filter :validate_auth_token, except: :create
+  include ApiHelper
   respond_to :json
 
   def create
@@ -10,14 +10,14 @@ class Api::V1::RegistrationsController < Devise::RegistrationsController
 
     if resource.save
       if resource.active_for_authentication?
-        return render :json => resource
+        return render json: {success: true}
       else
         expire_session_data_after_sign_in!
-        return render :json => {:success => true}
+        return render json: {success: true}
       end
     else
       clean_up_passwords resource
-      return render :status => 401, :json => {:errors => resource.errors}
+      return render status: 401, json: {errors: resource.errors}
     end
   end
 
@@ -32,24 +32,20 @@ class Api::V1::RegistrationsController < Devise::RegistrationsController
         update_needs_confirmation?(resource, prev_unconfirmed_email)
       end
       sign_in resource_name, resource
-      return render :json => {success: true}
+      return render json: {success: true}
     else
       clean_up_passwords resource
-      return render :status => 401, :json => {errors: resource.errors}
+      return render status: 401, json: {errors: resource.errors}
     end
   end
 
   private
 
-  def json_request?
-    request.content_type == 'application/json'
-  end
-
   def account_update_params
-    params.require(:user).permit( :email, :password, :password_confirmation, :current_password)
+    params.require(:user).permit(:email, :password, :password_confirmation, :current_password)
   end
 
   def sign_up_params
-    params.require(:user).permit( :email, :password, :password_confirmation)
+    params.require(:user).permit(:email, :password, :password_confirmation)
   end
 end
