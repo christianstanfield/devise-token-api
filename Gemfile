@@ -35,6 +35,7 @@ gem 'bcrypt', '~> 3.1.7'
 
 gem "devise"
 gem 'devise-token_authenticatable'
+gem 'activerecord-session_store'
 
 gem "haml", ">= 3.0.0"
 gem "haml-rails"
