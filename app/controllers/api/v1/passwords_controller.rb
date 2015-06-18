@@ -1,13 +1,14 @@
 class Api::V1::PasswordsController < Devise::SessionsController
-  skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
-  respond_to :json
+  skip_before_filter :verify_authenticity_token, if: :json_request?
+  include ApiHelper
 
   def create
-    @user = User.send_reset_password_instructions(params[:user])
-    if successfully_sent?(@user)
-      render :status => 200, :json => {:success => true}
+    @user = User.send_reset_password_instructions params[:user]
+
+    if successfully_sent? @user
+      render json: { success: true }, status: :accepted
     else
-      render :status => 422, :json => { :errors => @user.errors.full_messages }
+      render json: @user.errors, status: :unprocessable_entity
     end
   end
 end
