@@ -3,21 +3,17 @@ class Api::V1::RegistrationsController < Devise::RegistrationsController
   skip_before_filter :authenticate_scope!, only: [:update]
   before_filter :validate_auth_token, except: :create
   include ApiHelper
-  respond_to :json
 
   def create
-    build_resource(sign_up_params)
+    build_resource sign_up_params
 
     if resource.save
-      if resource.active_for_authentication?
-        return render json: {success: true}
-      else
-        expire_session_data_after_sign_in!
-        return render json: {success: true}
-      end
+
+      expire_session_data_after_sign_in! unless resource.active_for_authentication?
+      render json: resource, status: :created
     else
       clean_up_passwords resource
-      return render status: 401, json: {errors: resource.errors}
+      render json: resource.errors, status: :unprocessable_entity
     end
   end
 

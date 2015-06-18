@@ -5,7 +5,6 @@ class Api::V1::SessionsController < Devise::SessionsController
   before_filter :validate_auth_token, except: :create
   include Devise::Controllers::Helpers
   include ApiHelper
-  respond_to :json
 
   def create
     resource = User.find_for_database_authentication(email: sign_in_params[:email])
