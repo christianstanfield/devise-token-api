@@ -7,29 +7,24 @@ class Api::V1::SessionsController < Devise::SessionsController
   include ApiHelper
 
   def create
-    resource = User.find_for_database_authentication(email: sign_in_params[:email])
-    return failure unless resource
+    resource = User.find_for_database_authentication email: sign_in_params[:email]
 
-    if resource.valid_password?(sign_in_params[:password])
-      sign_in(:user, resource)
+    if resource && resource.valid_password?(sign_in_params[:password])
+      sign_in :user, resource
       resource.ensure_authentication_token!
-      render json: {success: true, token: resource.authentication_token}
-      return
+      render json: resource, status: :created
+    else
+      render json: { errors: [t('api.v1.sessions.invalid_login')] }, status: :unauthorized
     end
-    failure
   end
 
   def destroy
     resource.reset_authentication_token!
     Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name)
-    render status: 200, json: {success: true}
+    render json: { success: true }, status: :accepted
   end
 
   private
-
-  def failure
-    return render json: { success: false, errors: [t('api.v1.sessions.invalid_login')] }, status: :unauthorized
-  end
 
   def sign_in_params
     params.require(:user).permit(:email, :password)
