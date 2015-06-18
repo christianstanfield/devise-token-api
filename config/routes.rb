@@ -1,13 +1,12 @@
 DeviseTokenApi::Application.routes.draw do
-  devise_for :users
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
-  # root :to => 'devise/sessions#new'
-  devise_scope :user do
-    root to: "devise/sessions#new"
-  end
+  # devise_scope :user do
+  #   root to: "devise/sessions#new"
+  # end
 
   namespace :api do
     namespace :v1  do
@@ -49,7 +48,7 @@ DeviseTokenApi::Application.routes.draw do
   #       get 'recent', on: :collection
   #     end
   #   end
-  
+
   # Example resource route with concerns:
   #   concern :toggleable do
   #     post 'toggle'
